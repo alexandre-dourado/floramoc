@@ -9,4 +9,5 @@ dist
 supabase/.temp
 tsconfig.tsbuildinfo
 *.tar.gz
+*.zip
 .env*

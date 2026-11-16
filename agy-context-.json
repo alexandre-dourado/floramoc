@@ -19,6 +19,16 @@
       "date": "2026-11-16",
       "author": "AGY CLI",
       "summary": "Correção de carregamento do Web Worker do MapLibre GL no Vite/Vercel via setWorkerUrl com ?worker&url e fallback estático em public/assets."
+    },
+    {
+      "date": "2026-11-16",
+      "author": "AGY CLI",
+      "summary": "Criação do utilitário scripts/slice_assets.py para fatiamento inteligente de spritesheets e preparação dos prompts v1.2 para ChatGPT e Claude."
+    },
+    {
+      "date": "2026-11-16",
+      "author": "AGY CLI",
+      "summary": "Geração do pacote limpo flora-moc-claude-refinement.zip (294 KB, sem node_modules/segredos) para envio ao Claude Sonnet."
     }
   ]
 }
