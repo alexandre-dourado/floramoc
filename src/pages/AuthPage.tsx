@@ -60,9 +60,10 @@ export default function AuthPage() {
   const title = recovery ? 'Definir nova senha' : mode === 'signin' ? 'Entrar' : mode === 'signup' ? 'Criar conta' : 'Recuperar senha'
   return (
     <main className="mx-auto max-w-sm p-5">
-      <h1 className="font-serif text-3xl">{title}</h1>
-      <p className="mt-1 text-sm text-muted">Consultar o mapa não exige conta. Para registrar plantas ou sugerir correções, entre.</p>
-      <form onSubmit={submit} className="mt-4 space-y-3" noValidate>
+      <img src="/assets/branding/logo.webp" alt="" aria-hidden width={96} height={92} className="mx-auto mb-2 h-24 w-auto" />
+      <h1 className="text-center text-4xl font-bold text-forest">{title}</h1>
+      <p className="mt-1 text-center text-sm text-muted">Consultar o mapa não exige conta. Para registrar plantas ou sugerir correções, entre.</p>
+      <form onSubmit={submit} className="card mt-5 space-y-3 !p-4" noValidate>
         {!recovery && (
           <div>
             <label className="label" htmlFor="email">E-mail</label>

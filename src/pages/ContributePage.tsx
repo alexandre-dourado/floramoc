@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { LocateFixed } from 'lucide-react'
+import { ArrowLeft, ArrowRight, LocateFixed, Send, Trash2 } from 'lucide-react'
 import LocationPicker, { type Point } from '../components/map/LocationPicker'
-import { PlantPhoto } from '../components/plants/bits'
+import { CategoryIcon, PlantPhoto } from '../components/plants/bits'
 import { useAuth } from '../features/auth/AuthContext'
 import { CATEGORIES, IDENT_LEVELS, OCCURRENCE_TYPES, PRECISIONS, QUANTITIES, type Category, type IdentificationLevel, type LocationPrecision, type OccurrenceType, type QuantityEstimate } from '../lib/constants'
 import { ACCEPTED_PHOTO_TYPES, reprocessPhoto, validatePhoto } from '../lib/image'
@@ -117,79 +117,104 @@ export default function ContributePage() {
   }
 
   if (!loaded) return <p role="status" className="p-8 text-center text-muted">Carregando…</p>
-  const catLabel = (c: (typeof CATEGORIES)[number]) => `${c.glyph} · ${c.label}`
 
   return (
-    <main className="mx-auto max-w-xl p-4">
-      <h1 className="font-serif text-3xl">{id ? 'Editar registro' : 'Adicionar planta'}</h1>
-      <ol className="mt-3 flex gap-2 text-xs font-semibold" aria-label="Etapas">
-        {STEPS.map((s, i) => <li key={s} aria-current={i === step ? 'step' : undefined} className={`flex-1 rounded-full px-2 py-1 text-center ${i === step ? 'bg-forest text-paper' : 'bg-sage text-forest'}`}>{i + 1}. {s}</li>)}
-      </ol>
-      {wasApproved && <p role="note" className="mt-3 rounded-lg border border-sun bg-sun/20 p-2 text-sm">Este registro está aprovado. Ao salvar, ele volta para análise e <b>sai temporariamente do mapa público</b> até nova revisão.</p>}
-      <form onSubmit={submit} className="mt-4 space-y-4" noValidate>
-        {step === 0 && (
-          <section className="space-y-3" aria-label="Localização">
-            <p className="text-sm">Toque no mapa para marcar a planta e arraste o marcador para ajustar.</p>
-            <LocationPicker value={form.point} onChange={(p) => set('point', p)} />
-            <button type="button" className="btn btn-ghost" onClick={locate}><LocateFixed aria-hidden className="h-4 w-4" />Usar minha localização</button>
-            {geoMsg && <p role="status" className="text-sm">{geoMsg}</p>}
-            <p className="text-sm" aria-live="polite">{form.point ? `Ponto marcado: ${form.point.lat.toFixed(5)}, ${form.point.lng.toFixed(5)}` : 'Nenhum ponto marcado ainda.'}</p>
-            <fieldset><legend className="label">Precisão</legend>
-              <div className="flex gap-4">{PRECISIONS.map((p) => <label key={p.value} className="flex min-h-11 items-center gap-2"><input type="radio" name="prec" checked={form.location_precision === p.value} onChange={() => set('location_precision', p.value)} />{p.label}</label>)}</div>
-            </fieldset>
-          </section>
-        )}
-        {step === 1 && (
-          <section className="space-y-3" aria-label="Identificação">
-            <label className="flex min-h-11 items-center gap-2 font-semibold"><input type="checkbox" checked={form.unknown} onChange={(e) => set('unknown', e.target.checked)} />Não sei identificar</label>
-            {!form.unknown && (
-              <>
-                <div><label className="label" htmlFor="cn">Nome popular *</label><input id="cn" className="field" maxLength={100} value={form.common_name} onChange={(e) => set('common_name', e.target.value)} /></div>
-                <div><label className="label" htmlFor="sn">Nome científico (opcional)</label><input id="sn" className="field italic" maxLength={150} value={form.scientific_name} onChange={(e) => set('scientific_name', e.target.value)} /></div>
-                <div><label className="label" htmlFor="il">Grau de identificação</label>
-                  <select id="il" className="field" value={form.identification_level} onChange={(e) => set('identification_level', e.target.value as IdentificationLevel)}>
-                    {IDENT_LEVELS.filter((l) => l.value !== 'unknown').map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
-                  </select></div>
-              </>
-            )}
-            <div><label className="label" htmlFor="cat">Categoria *</label>
-              <select id="cat" className="field" value={form.category} onChange={(e) => set('category', e.target.value as Category)}>{CATEGORIES.map((c) => <option key={c.value} value={c.value}>{catLabel(c)}</option>)}</select></div>
-            <div className="grid grid-cols-2 gap-3">
-              <div><label className="label" htmlFor="ot">Tipo</label>
-                <select id="ot" className="field" value={form.occurrence_type} onChange={(e) => set('occurrence_type', e.target.value as OccurrenceType)}>{OCCURRENCE_TYPES.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select></div>
-              <div><label className="label" htmlFor="qe">Quantidade</label>
-                <select id="qe" className="field" value={form.quantity_estimate} onChange={(e) => set('quantity_estimate', e.target.value as QuantityEstimate)}>{QUANTITIES.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select></div>
-            </div>
-            <div><label className="label" htmlFor="ds">Observação (opcional)</label><textarea id="ds" className="field" rows={3} maxLength={500} value={form.description} onChange={(e) => set('description', e.target.value)} /><p className="text-xs text-muted">{form.description.length}/500</p></div>
-          </section>
-        )}
-        {step === 2 && (
-          <section className="space-y-3" aria-label="Foto e envio">
-            <div>
-              <label className="label" htmlFor="ph">Foto (opcional, JPEG/PNG/WebP até 5 MB)</label>
-              <input id="ph" type="file" accept={ACCEPTED_PHOTO_TYPES.join(',')} className="field" onChange={(e) => pickPhoto(e.target.files?.[0])} />
-              {preview ? <img src={preview} alt="Pré-visualização da foto escolhida" className="mt-2 h-40 w-full rounded-xl object-cover" />
-                : oldPhoto && !removeOld ? <PlantPhoto path={oldPhoto} alt="Foto atual" className="mt-2 h-40 w-full rounded-xl" /> : null}
-              {(photo || (oldPhoto && !removeOld)) && <button type="button" className="btn btn-ghost mt-2" onClick={() => { setPhoto(null); setPreview(null); setRemoveOld(true) }}>Remover foto</button>}
-              <p className="mt-1 text-xs text-muted">A foto é reprocessada no seu navegador para remover metadados (como GPS).</p>
-            </div>
-            <ul className="list-disc space-y-1 rounded-lg bg-sage/60 p-3 pl-7 text-xs">
-              <li>Não entre em terreno privado para fotografar ou marcar uma planta.</li>
-              <li>Não retire folhas, flores, frutos, sementes ou mudas.</li>
-              <li>Não consuma nem use plantas como medicamento com base no mapa.</li>
-              <li>A identificação é comunitária e pode estar incorreta.</li>
-            </ul>
-            <label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1 h-5 w-5" checked={form.acknowledged} onChange={(e) => set('acknowledged', e.target.checked)} />
-              <span>Confirmo que o ponto está em espaço público ou que a planta pode ser observada de um local público. Não estou registrando endereço residencial, quintal privado, área restrita ou localização que exponha alguém a risco.</span></label>
-          </section>
-        )}
-        {error && <p role="alert" className="err">{error}</p>}
-        <div className="flex gap-2">
-          {step > 0 && <button type="button" className="btn btn-ghost" onClick={() => { setError(null); setStep(step - 1) }}>Voltar</button>}
-          {step < 2 ? <button type="button" className="btn btn-primary ml-auto" onClick={next}>Continuar</button>
-            : <button className="btn btn-primary ml-auto" disabled={busy || !form.acknowledged}>{busy ? 'Enviando…' : id ? 'Salvar e enviar para análise' : 'Enviar para análise'}</button>}
+    <main className="mx-auto max-w-xl p-3 sm:p-4">
+      <div className="fiche rise">
+        <div className="relative flex items-start justify-between gap-3">
+          <div>
+            <p className="eyebrow">Caderno de campo · Flora MOC</p>
+            <h1 className="mt-1 text-[2.4rem] font-bold leading-none text-forest">{id ? 'Editar registro' : 'Adicionar planta'}</h1>
+          </div>
+          <span className="fiche-stamp mt-1 shrink-0"><img src="/assets/branding/logo-icon.webp" alt="" aria-hidden className="h-4 w-auto" />Ficha de campo</span>
         </div>
-      </form>
+        <ol className="relative mt-5 grid grid-cols-3 gap-2" aria-label="Etapas">
+          {STEPS.map((s, i) => (
+            <li key={s} aria-current={i === step ? 'step' : undefined} className="space-y-1">
+              <span className={`block h-1 rounded-full transition-colors duration-300 ${i <= step ? 'bg-forest' : 'bg-line'}`} />
+              <span className={`eyebrow block ${i === step ? '!text-forest' : ''}`}>Etapa {i + 1}</span>
+              <span className={`block font-serif text-lg font-semibold leading-tight ${i === step ? 'text-forest' : 'text-muted'}`}>{s}</span>
+            </li>
+          ))}
+        </ol>
+        {wasApproved && <p role="note" className="relative mt-4 rounded-lg border border-sun bg-sun-soft p-2.5 text-sm">Este registro está aprovado. Ao salvar, ele volta para análise e <b>sai temporariamente do mapa público</b> até nova revisão.</p>}
+        <form onSubmit={submit} className="relative mt-5 space-y-4" noValidate>
+          {step === 0 && (
+            <section className="pop space-y-3" aria-label="Localização">
+              <p className="text-sm">Toque no mapa para marcar a planta e arraste o marcador para ajustar.</p>
+              <LocationPicker value={form.point} onChange={(p) => set('point', p)} />
+              <button type="button" className="btn btn-ghost" onClick={locate}><LocateFixed aria-hidden className="h-4 w-4" />Usar minha localização</button>
+              {geoMsg && <p role="status" className="text-sm">{geoMsg}</p>}
+              <p className="rounded-lg border border-dashed border-leaf bg-white/70 px-3 py-2 font-mono text-xs" aria-live="polite">{form.point ? `Ponto marcado: ${form.point.lat.toFixed(5)}, ${form.point.lng.toFixed(5)}` : 'Nenhum ponto marcado ainda.'}</p>
+              <fieldset><legend className="label">Precisão</legend>
+                <div className="flex gap-4">{PRECISIONS.map((p) => <label key={p.value} className="flex min-h-11 items-center gap-2"><input type="radio" name="prec" className="accent-forest" checked={form.location_precision === p.value} onChange={() => set('location_precision', p.value)} />{p.label}</label>)}</div>
+              </fieldset>
+            </section>
+          )}
+          {step === 1 && (
+            <section className="pop space-y-4" aria-label="Identificação">
+              <label className="flex min-h-11 items-center gap-2 font-semibold"><input type="checkbox" className="h-5 w-5 accent-forest" checked={form.unknown} onChange={(e) => set('unknown', e.target.checked)} />Não sei identificar</label>
+              {!form.unknown && (
+                <>
+                  <div><label className="label" htmlFor="cn">Nome popular *</label><input id="cn" className="field font-serif !text-xl font-semibold" maxLength={100} value={form.common_name} onChange={(e) => set('common_name', e.target.value)} /></div>
+                  <div><label className="label" htmlFor="sn">Nome científico (opcional)</label><input id="sn" className="field font-serif !text-xl italic" maxLength={150} value={form.scientific_name} onChange={(e) => set('scientific_name', e.target.value)} /></div>
+                  <div><label className="label" htmlFor="il">Grau de identificação</label>
+                    <select id="il" className="field" value={form.identification_level} onChange={(e) => set('identification_level', e.target.value as IdentificationLevel)}>
+                      {IDENT_LEVELS.filter((l) => l.value !== 'unknown').map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
+                    </select></div>
+                </>
+              )}
+              <fieldset><legend className="label">Categoria *</legend>
+                <div className="grid grid-cols-4 gap-2">
+                  {CATEGORIES.map((c) => (
+                    <label key={c.value} className="tile">
+                      <input type="radio" name="category" value={c.value} className="sr-only" checked={form.category === c.value} onChange={() => set('category', c.value)} />
+                      <span aria-hidden className="h-9 w-9"><CategoryIcon category={c.value} /></span>
+                      {c.label.split(' / ')[0]}
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+              <div className="grid grid-cols-2 gap-3">
+                <div><label className="label" htmlFor="ot">Tipo</label>
+                  <select id="ot" className="field" value={form.occurrence_type} onChange={(e) => set('occurrence_type', e.target.value as OccurrenceType)}>{OCCURRENCE_TYPES.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select></div>
+                <div><label className="label" htmlFor="qe">Quantidade</label>
+                  <select id="qe" className="field" value={form.quantity_estimate} onChange={(e) => set('quantity_estimate', e.target.value as QuantityEstimate)}>{QUANTITIES.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select></div>
+              </div>
+              <div><label className="label" htmlFor="ds">Observação (opcional)</label><textarea id="ds" className="field" rows={3} maxLength={500} value={form.description} onChange={(e) => set('description', e.target.value)} /><p className="mt-0.5 text-right text-xs text-muted tabular-nums">{form.description.length}/500</p></div>
+            </section>
+          )}
+          {step === 2 && (
+            <section className="pop space-y-4" aria-label="Foto e envio">
+              <div>
+                <label className="label" htmlFor="ph">Foto (opcional, JPEG/PNG/WebP até 5 MB)</label>
+                <input id="ph" type="file" accept={ACCEPTED_PHOTO_TYPES.join(',')} className="field file:mr-3 file:rounded-lg file:border-0 file:bg-sage file:px-3 file:py-1.5 file:font-semibold file:text-forest" onChange={(e) => pickPhoto(e.target.files?.[0])} />
+                {preview ? <img src={preview} alt="Pré-visualização da foto escolhida" className="mt-2 aspect-[4/3] w-full rounded-2xl object-cover ring-1 ring-line" />
+                  : oldPhoto && !removeOld ? <PlantPhoto path={oldPhoto} alt="Foto atual" className="mt-2 aspect-[4/3] w-full rounded-2xl ring-1 ring-line" /> : null}
+                {(photo || (oldPhoto && !removeOld)) && <button type="button" className="btn btn-ghost mt-2" onClick={() => { setPhoto(null); setPreview(null); setRemoveOld(true) }}><Trash2 aria-hidden className="h-4 w-4" />Remover foto</button>}
+                <p className="mt-1 text-xs text-muted">A foto é reprocessada no seu navegador para remover metadados (como GPS).</p>
+              </div>
+              <div className="rounded-xl border border-line bg-white/70 p-3">
+                <p className="eyebrow mb-1.5">Boas práticas de campo</p>
+                <ul className="list-disc space-y-1 pl-5 text-xs marker:text-leaf">
+                  <li>Não entre em terreno privado para fotografar ou marcar uma planta.</li>
+                  <li>Não retire folhas, flores, frutos, sementes ou mudas.</li>
+                  <li>Não consuma nem use plantas como medicamento com base no mapa.</li>
+                  <li>A identificação é comunitária e pode estar incorreta.</li>
+                </ul>
+              </div>
+              <label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1 h-5 w-5 accent-forest" checked={form.acknowledged} onChange={(e) => set('acknowledged', e.target.checked)} />
+                <span>Confirmo que o ponto está em espaço público ou que a planta pode ser observada de um local público. Não estou registrando endereço residencial, quintal privado, área restrita ou localização que exponha alguém a risco.</span></label>
+            </section>
+          )}
+          {error && <p role="alert" className="err rounded-lg border border-danger/30 bg-danger/10 px-3 py-2">{error}</p>}
+          <div className="flex gap-2 border-t border-dashed border-forest/25 pt-4">
+            {step > 0 && <button type="button" className="btn btn-ghost" onClick={() => { setError(null); setStep(step - 1) }}><ArrowLeft aria-hidden className="h-4 w-4" />Voltar</button>}
+            {step < 2 ? <button type="button" className="btn btn-primary ml-auto" onClick={next}>Continuar<ArrowRight aria-hidden className="h-4 w-4" /></button>
+              : <button className="btn btn-primary ml-auto" disabled={busy || !form.acknowledged}><Send aria-hidden className="h-4 w-4" />{busy ? 'Enviando…' : id ? 'Salvar e enviar para análise' : 'Enviar para análise'}</button>}
+          </div>
+        </form>
+      </div>
     </main>
   )
 }

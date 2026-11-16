@@ -3,35 +3,99 @@
 
 @theme {
   --color-forest: #183B32;
+  --color-forest-deep: #0F2A23;
   --color-leaf: #6F8F62;
+  --color-moss: #4F6B45;
   --color-sage: #DCE6D5;
   --color-paper: #F6F5EF;
+  --color-cream: #FBFAF4;
+  --color-line: #DCDFD2;
   --color-ink: #202722;
   --color-muted: #5C665C;
   --color-sun: #D9B95B;
+  --color-sun-soft: #F4E9BF;
+  --color-sun-ink: #6B5410;
+  --color-stone: #E8E6DC;
   --color-danger: #B44D43;
-  --font-serif: ui-serif, Georgia, "Times New Roman", serif;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Cormorant Garamond", ui-serif, Georgia, "Times New Roman", serif;
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --shadow-float: 0 1px 0 rgb(255 255 255 / .6) inset, 0 8px 28px -8px rgb(24 59 50 / .28), 0 2px 6px rgb(24 59 50 / .08);
+  --shadow-card: 0 1px 2px rgb(24 59 50 / .06), 0 6px 18px -10px rgb(24 59 50 / .18);
 }
 
-body { background: var(--color-paper); color: var(--color-ink); font-family: var(--font-sans); }
+body { background: var(--color-paper); color: var(--color-ink); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-family: var(--font-serif); letter-spacing: -.01em; }
 
 @layer components {
-  .btn { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; gap: .5rem; border-radius: .75rem; padding: .5rem 1rem; font-weight: 600; font-size: .9rem; border: 1px solid transparent; cursor: pointer; transition: background-color .15s, opacity .15s; }
+  /* ---------- Botões ---------- */
+  .btn { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; gap: .5rem; border-radius: .75rem; padding: .5rem 1.1rem; font-weight: 600; font-size: .9rem; border: 1px solid transparent; cursor: pointer; transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s, transform .2s, opacity .2s; }
+  .btn:active:not(:disabled) { transform: translateY(1px) scale(.99); }
   .btn:disabled { opacity: .5; cursor: not-allowed; }
-  .btn:focus-visible, .field:focus-visible, .chip:focus-visible { outline: 3px solid var(--color-sun); outline-offset: 2px; }
-  .btn-primary { background: var(--color-forest); color: var(--color-paper); }
-  .btn-primary:hover:not(:disabled) { background: #0f2a23; }
+  .btn:focus-visible, .field:focus-visible, .chip:focus-visible, .nav-link:focus-visible, .tab:focus-visible, .tile:focus-within { outline: 3px solid var(--color-sun); outline-offset: 2px; }
+  .btn-primary { background: var(--color-forest); color: var(--color-paper); box-shadow: 0 1px 0 rgb(255 255 255 / .12) inset, 0 4px 12px -4px rgb(24 59 50 / .5); }
+  .btn-primary:hover:not(:disabled) { background: var(--color-forest-deep); box-shadow: 0 1px 0 rgb(255 255 255 / .12) inset, 0 8px 18px -6px rgb(24 59 50 / .55); }
   .btn-ghost { background: white; border-color: #d5d9cf; color: var(--color-ink); }
-  .btn-ghost:hover:not(:disabled) { background: var(--color-sage); }
+  .btn-ghost:hover:not(:disabled) { background: var(--color-sage); border-color: var(--color-leaf); }
   .btn-danger { background: var(--color-danger); color: white; }
-  .field { width: 100%; min-height: 44px; border-radius: .75rem; border: 1px solid #c9cfc3; background: white; padding: .5rem .75rem; font-size: 1rem; }
+  .btn-danger:hover:not(:disabled) { background: #9a3f36; }
+  .btn-approve { background: var(--color-moss); color: white; box-shadow: 0 4px 12px -4px rgb(79 107 69 / .6); }
+  .btn-approve:hover:not(:disabled) { background: #3f5a37; }
+  .btn-reject { background: white; color: var(--color-danger); border-color: color-mix(in srgb, var(--color-danger) 45%, white); }
+  .btn-reject:hover:not(:disabled) { background: var(--color-danger); color: white; border-color: var(--color-danger); }
+
+  /* ---------- Campos ---------- */
+  .field { width: 100%; min-height: 44px; border-radius: .75rem; border: 1px solid #c9cfc3; background: white; padding: .5rem .75rem; font-size: 1rem; transition: border-color .2s, box-shadow .2s; }
+  .field:hover { border-color: var(--color-leaf); }
+  .field:focus { border-color: var(--color-forest); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-sun) 40%, transparent); }
   .label { display: block; margin-bottom: .25rem; font-size: .85rem; font-weight: 600; }
-  .chip { display: inline-flex; min-height: 36px; align-items: center; gap: .35rem; border-radius: 999px; border: 1px solid #c9cfc3; background: white; padding: .25rem .75rem; font-size: .85rem; white-space: nowrap; cursor: pointer; }
-  .chip[aria-pressed="true"] { background: var(--color-forest); color: var(--color-paper); border-color: var(--color-forest); }
-  .card { border-radius: 1rem; border: 1px solid #dfe3d8; background: white; padding: 1rem; }
+  .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--color-muted); }
+
+  /* ---------- Chips ---------- */
+  .chip { display: inline-flex; min-height: 38px; align-items: center; gap: .4rem; border-radius: 999px; border: 1px solid #c9cfc3; background: rgb(255 255 255 / .85); padding: .2rem .8rem .2rem .45rem; font-size: .85rem; font-weight: 500; white-space: nowrap; cursor: pointer; transition: background-color .2s, color .2s, border-color .2s, transform .2s, box-shadow .2s; }
+  .chip:hover { border-color: var(--color-leaf); background: white; }
+  .chip[aria-pressed="true"] { background: var(--color-forest); color: var(--color-paper); border-color: var(--color-forest); box-shadow: 0 4px 10px -4px rgb(24 59 50 / .55); }
+  .chip-icon { display: grid; height: 1.75rem; width: 1.75rem; place-items: center; border-radius: 999px; background: var(--color-cream); }
+
+  /* ---------- Cartões & superfícies ---------- */
+  .card { border-radius: 1rem; border: 1px solid var(--color-line); background: white; padding: 1rem; box-shadow: var(--shadow-card); }
+  .glass { background: rgb(255 255 255 / .9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgb(255 255 255 / .7); box-shadow: var(--shadow-float); }
   .err { color: var(--color-danger); font-size: .85rem; }
+
+  /* ---------- Navegação ---------- */
+  .nav-link { position: relative; border-radius: .5rem; padding: .55rem .7rem; font-size: .88rem; font-weight: 600; color: color-mix(in srgb, var(--color-ink) 72%, transparent); transition: color .2s, background-color .2s; cursor: pointer; background: transparent; border: 0; }
+  .nav-link::after { content: ""; position: absolute; left: .7rem; right: .7rem; bottom: .2rem; height: 2px; border-radius: 2px; background: var(--color-sun); transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
+  .nav-link:hover { color: var(--color-forest); background: color-mix(in srgb, var(--color-sage) 60%, transparent); }
+  .nav-link[aria-current="page"] { color: var(--color-forest); }
+  .nav-link[aria-current="page"]::after { transform: scaleX(1); }
+
+  /* ---------- Abas (segmented) ---------- */
+  .tab { display: inline-flex; min-height: 40px; align-items: center; gap: .4rem; border-radius: .6rem; padding: .35rem .9rem; font-size: .88rem; font-weight: 600; color: var(--color-muted); cursor: pointer; transition: background-color .2s, color .2s, box-shadow .2s; }
+  .tab:hover { color: var(--color-forest); }
+  .tab[aria-selected="true"] { background: white; color: var(--color-forest); box-shadow: 0 1px 3px rgb(24 59 50 / .15); }
+
+  /* ---------- Selos ---------- */
+  .badge { display: inline-flex; align-items: center; gap: .35rem; border-radius: 999px; padding: .2rem .65rem; font-size: .72rem; font-weight: 700; letter-spacing: .02em; line-height: 1.2; border: 1px solid transparent; }
+  .badge-identified { background: var(--color-forest); color: var(--color-paper); }
+  .badge-probable { background: var(--color-sun-soft); color: var(--color-sun-ink); border-color: color-mix(in srgb, var(--color-sun) 70%, white); }
+  .badge-unknown { background: var(--color-stone); color: var(--color-muted); border-color: #cfccbf; border-style: dashed; }
+
+  /* ---------- Ficha botânica ---------- */
+  .fiche { position: relative; border-radius: 1.1rem; border: 1px solid color-mix(in srgb, var(--color-forest) 28%, white); background: var(--color-cream); padding: 1.25rem 1.1rem 1.4rem; box-shadow: var(--shadow-card); }
+  .fiche::before { content: ""; pointer-events: none; position: absolute; inset: .4rem; border-radius: .8rem; border: 1px dashed color-mix(in srgb, var(--color-forest) 22%, transparent); }
+  .fiche-stamp { display: inline-flex; align-items: center; gap: .4rem; border: 1.5px solid var(--color-forest); border-radius: .35rem; padding: .15rem .5rem; font-size: .62rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--color-forest); transform: rotate(-2deg); background: var(--color-cream); }
+  .tile { position: relative; display: flex; flex-direction: column; align-items: center; gap: .3rem; border-radius: .8rem; border: 1px solid #c9cfc3; background: white; padding: .55rem .3rem; text-align: center; font-size: .75rem; font-weight: 600; cursor: pointer; transition: border-color .2s, background-color .2s, box-shadow .2s, transform .2s; }
+  .tile:hover { border-color: var(--color-leaf); transform: translateY(-1px); }
+  .tile:has(input:checked) { border-color: var(--color-forest); background: var(--color-sage); box-shadow: 0 0 0 2px var(--color-forest) inset; }
+
+  /* ---------- Mapa ---------- */
+  .atlas-map .maplibregl-ctrl-group { border-radius: .75rem; overflow: hidden; box-shadow: var(--shadow-float); border: 1px solid rgb(255 255 255 / .7); }
+  @media (max-width: 1023px) { .atlas-map .maplibregl-ctrl-top-right { display: none; } }
 }
+
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes pop { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: none; } }
+.rise { animation: rise .45s cubic-bezier(.2, .7, .2, 1) both; }
+.pop { animation: pop .25s ease-out both; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }

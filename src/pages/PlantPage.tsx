@@ -22,7 +22,7 @@ export default function PlantPage() {
   if (!state.plant) return <NotFoundPage />
   return (
     <main className="mx-auto max-w-xl">
-      <p className="p-3 text-sm"><Link to="/" className="underline">← Voltar ao mapa</Link></p>
+      <p className="p-3 text-sm"><Link to="/" className="font-semibold text-forest underline underline-offset-2 hover:text-moss">← Voltar ao mapa</Link></p>
       <PlantDetail plant={state.plant} />
     </main>
   )

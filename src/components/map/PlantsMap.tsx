@@ -100,7 +100,7 @@ export default function PlantsMap({ plants, selectedId, onSelect, onBounds }: Pr
     <div className="relative h-full w-full">
       <div ref={el} className="h-full w-full" aria-label="Mapa de plantas de Montes Claros" />
       {failed && (
-        <div role="alert" className="absolute inset-x-4 top-20 rounded-xl border border-danger bg-white p-3 text-sm shadow">
+        <div role="alert" className="absolute inset-x-4 top-36 rounded-xl border border-danger bg-white p-3 text-sm shadow">
           O mapa base não pôde ser carregado agora. Use a lista de resultados ou tente novamente em instantes.
         </div>
       )}
