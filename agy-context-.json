@@ -14,6 +14,11 @@
       "date": "2026-11-16",
       "author": "AGY CLI",
       "summary": "Validação de RLS e tabelas Supabase (plants_public 200 OK, tabelas restritas 401 RLS), sincronização com origin/main no GitHub e verificação do deploy de produção."
+    },
+    {
+      "date": "2026-11-16",
+      "author": "AGY CLI",
+      "summary": "Correção de carregamento do Web Worker do MapLibre GL no Vite/Vercel via setWorkerUrl com ?worker&url e fallback estático em public/assets."
     }
   ]
 }
