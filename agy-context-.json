@@ -1,0 +1,14 @@
+{
+  "project_name": "Flora MOC",
+  "description": "Mapa colaborativo de árvores e plantas de Montes Claros/MG",
+  "production_url": "https://floramoc-pi.vercel.app",
+  "github_repo": "https://github.com/alexandre-dourado/floramoc",
+  "supabase_project_ref": "wardcsfhdttwkxemosby",
+  "change_log": [
+    {
+      "date": "2026-11-16",
+      "author": "AGY CLI",
+      "summary": "Parte 2: Auditoria completa, sanitização de configuração, geração de thumbnail OpenGraph (.webp), configuração de .env.local e Vercel, deploy em produção na Vercel (https://floramoc-pi.vercel.app) e configuração do MCP do Supabase."
+    }
+  ]
+}
