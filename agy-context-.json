@@ -29,6 +29,11 @@
       "date": "2026-11-16",
       "author": "AGY CLI",
       "summary": "Geração do pacote limpo flora-moc-claude-refinement.zip (294 KB, sem node_modules/segredos) para envio ao Claude Sonnet."
+    },
+    {
+      "date": "2026-11-16",
+      "author": "AGY CLI",
+      "summary": "Criação da ferramenta C:\\Alx\\AD26\\Projetos\\_TOOLKIT\\removerFUNDO, fatiamento com remoção de fundo e defringing dos 8 ícones + logo, e inclusão dos ativos transparentes em public/assets/branding."
     }
   ]
 }
