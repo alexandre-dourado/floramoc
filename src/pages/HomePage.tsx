@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Plus, Search, X } from 'lucide-react'
+import InstallBanner from '../components/layout/InstallBanner'
 import PlantsMap from '../components/map/PlantsMap'
 import PlantList from '../components/plants/PlantList'
 import PlantDetail from '../components/plants/PlantDetail'
@@ -72,35 +73,38 @@ export default function HomePage() {
   const open = sheet || Boolean(selected)
 
   return (
-    <div className="relative flex h-[calc(100dvh-3.5rem)] flex-col lg:flex-row">
-      <div className="atlas-map relative min-h-0 flex-1">
-        <PlantsMap plants={plants} selectedId={selectedId} onSelect={onSelect} onBounds={setBounds} />
-        <div className="absolute inset-x-3 top-3 z-10 lg:right-auto lg:w-[26rem]">
-          <Filters q={q} setQ={setQ} cat={cat} setCat={setCat} />
-          <div className="mt-2 hidden items-center gap-2 lg:flex">
-            <CountBadge loading={loading} count={plants.length} className="shadow-md" />
-            {plants.length >= PUBLIC_LIMIT && <span className="glass rounded-full px-3 py-1 text-xs text-muted">Limite de 1.000 atingido; aproxime o mapa</span>}
+    <div className="relative flex h-[calc(100dvh-3.5rem)] flex-col">
+      <InstallBanner />
+      <div className="relative flex min-h-0 flex-1 flex-col lg:flex-row">
+        <div className="atlas-map relative min-h-0 flex-1">
+          <PlantsMap plants={plants} selectedId={selectedId} onSelect={onSelect} onBounds={setBounds} />
+          <div className="absolute inset-x-3 top-3 z-10 lg:right-auto lg:w-[26rem]">
+            <Filters q={q} setQ={setQ} cat={cat} setCat={setCat} />
+            <div className="mt-2 hidden items-center gap-2 lg:flex">
+              <CountBadge loading={loading} count={plants.length} className="shadow-md" />
+              {plants.length >= PUBLIC_LIMIT && <span className="glass rounded-full px-3 py-1 text-xs text-muted">Limite de 1.000 atingido; aproxime o mapa</span>}
+            </div>
           </div>
         </div>
+        <aside aria-label="Resultados" className="absolute inset-x-0 bottom-0 z-20 flex max-h-[62dvh] flex-col rounded-t-3xl border-t border-line bg-paper shadow-[0_-10px_30px_-8px_rgba(24,59,50,.25)] lg:static lg:max-h-none lg:w-[400px] lg:rounded-none lg:border-l lg:border-t-0 lg:shadow-none">
+          <Link to="/contribuir" className="btn btn-primary absolute -top-16 right-3 shadow-lg lg:hidden"><Plus aria-hidden className="h-4 w-4" />Adicionar planta</Link>
+          <button type="button" onClick={() => setSheet((s) => !s)} aria-expanded={open} aria-label={open ? 'Recolher lista de plantas' : 'Expandir lista de plantas'} className="flex min-h-14 flex-col items-center justify-center gap-1.5 px-4 pb-1 pt-2 lg:hidden">
+            <span aria-hidden className="h-1.5 w-11 rounded-full bg-forest/25" />
+            <CountBadge loading={loading} count={plants.length} />
+          </button>
+          <div className="hidden border-b border-line bg-cream px-4 py-3 lg:block">
+            <p className="eyebrow">Atlas botânico</p>
+            <h2 className="font-serif text-[1.65rem] font-bold leading-tight text-forest">Plantas em Montes Claros</h2>
+            <p className="mt-0.5 text-xs text-muted">{loading ? 'Carregando…' : countLabel(plants.length)}{plants.length >= PUBLIC_LIMIT ? ' (limite de 1.000 atingido; aproxime o mapa)' : ''}</p>
+          </div>
+          <div className={`${open ? 'block' : 'hidden'} min-h-0 flex-1 overflow-y-auto overscroll-contain lg:block`}>
+            {selected
+              ? <PlantDetail plant={selected} onClose={() => setSelectedId(null)} />
+              : <PlantList plants={plants} loading={loading} error={error} selectedId={selectedId} onSelect={onSelect} onRetry={() => setTick((t) => t + 1)} />}
+          </div>
+          <Link to="/contribuir" className="btn btn-primary m-3 hidden lg:inline-flex"><Plus aria-hidden className="h-4 w-4" />Adicionar planta</Link>
+        </aside>
       </div>
-      <aside aria-label="Resultados" className="absolute inset-x-0 bottom-0 z-20 flex max-h-[62dvh] flex-col rounded-t-3xl border-t border-line bg-paper shadow-[0_-10px_30px_-8px_rgba(24,59,50,.25)] lg:static lg:max-h-none lg:w-[400px] lg:rounded-none lg:border-l lg:border-t-0 lg:shadow-none">
-        <Link to="/contribuir" className="btn btn-primary absolute -top-16 right-3 shadow-lg lg:hidden"><Plus aria-hidden className="h-4 w-4" />Adicionar planta</Link>
-        <button type="button" onClick={() => setSheet((s) => !s)} aria-expanded={open} aria-label={open ? 'Recolher lista de plantas' : 'Expandir lista de plantas'} className="flex min-h-14 flex-col items-center justify-center gap-1.5 px-4 pb-1 pt-2 lg:hidden">
-          <span aria-hidden className="h-1.5 w-11 rounded-full bg-forest/25" />
-          <CountBadge loading={loading} count={plants.length} />
-        </button>
-        <div className="hidden border-b border-line bg-cream px-4 py-3 lg:block">
-          <p className="eyebrow">Atlas botânico</p>
-          <h2 className="font-serif text-[1.65rem] font-bold leading-tight text-forest">Plantas em Montes Claros</h2>
-          <p className="mt-0.5 text-xs text-muted">{loading ? 'Carregando…' : countLabel(plants.length)}{plants.length >= PUBLIC_LIMIT ? ' (limite de 1.000 atingido; aproxime o mapa)' : ''}</p>
-        </div>
-        <div className={`${open ? 'block' : 'hidden'} min-h-0 flex-1 overflow-y-auto overscroll-contain lg:block`}>
-          {selected
-            ? <PlantDetail plant={selected} onClose={() => setSelectedId(null)} />
-            : <PlantList plants={plants} loading={loading} error={error} selectedId={selectedId} onSelect={onSelect} onRetry={() => setTick((t) => t + 1)} />}
-        </div>
-        <Link to="/contribuir" className="btn btn-primary m-3 hidden lg:inline-flex"><Plus aria-hidden className="h-4 w-4" />Adicionar planta</Link>
-      </aside>
     </div>
   )
 }

@@ -39,6 +39,11 @@
       "date": "2026-11-16",
       "author": "AGY CLI",
       "summary": "Merge da versão v1.2 refinada pelo Claude Sonnet: tipografia botânica editorial (Cormorant Garamond + Hanken Grotesk), layout com novos ícones de categorias, badges botânicos e deploy promovido na Vercel."
+    },
+    {
+      "date": "2026-11-17",
+      "author": "AGY CLI",
+      "summary": "Transformação completa em Progressive Web App (PWA): Web App Manifest standalone, ícones adaptativos e maskable (192px/512px), Service Worker com cache-first para estáticos e fallback offline, e barra interativa de instalação na Home (InstallBanner) com 1-click install no Android/Chromium e guia passo a passo no iOS Safari."
     }
   ]
 }
