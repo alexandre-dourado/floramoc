@@ -1,5 +1,5 @@
 // Flora MOC — Service Worker (PWA Offline & Asset Cache)
-const CACHE_NAME = 'floramoc-v1.3'
+const CACHE_NAME = 'floramoc-v1.4'
 
 const PRECACHE_ASSETS = [
   '/',
@@ -59,8 +59,9 @@ self.addEventListener('fetch', (event) => {
   }
 
   // 3. Assets estáticos (JS, CSS, Imagens, Fontes): Cache-first
+  // Nota: Vídeos usam Range Requests (HTTP 206) e devem ser transmitidos via rede direta
   const isStatic =
-    url.pathname.startsWith('/assets/') ||
+    (url.pathname.startsWith('/assets/') && !url.pathname.startsWith('/assets/video/')) ||
     url.pathname.startsWith('/icons/') ||
     url.hostname.includes('fonts.googleapis.com') ||
     url.hostname.includes('fonts.gstatic.com')

@@ -108,13 +108,13 @@ export default function PromoVideoModal({ isOpen, onClose }: PromoVideoModalProp
       role="dialog"
       aria-modal="true"
       aria-label="Apresentação do Flora MOC"
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-ink/75 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-ink/80 backdrop-blur-md"
       onClick={onClose}
     >
       <div
         ref={dialogRef}
         onClick={(e) => e.stopPropagation()}
-        className="relative flex flex-col w-full max-w-[360px] sm:max-w-[400px] max-h-[92dvh] overflow-hidden rounded-3xl bg-forest-deep shadow-[0_24px_60px_-10px_rgba(15,42,35,0.6)] border border-white/20 select-none animate-in fade-in zoom-in-95 duration-200"
+        className="relative flex flex-col w-full max-w-[360px] sm:max-w-[400px] max-h-[92dvh] overflow-hidden rounded-3xl bg-forest-deep shadow-[0_24px_60px_-10px_rgba(15,42,35,0.6)] border border-white/20 select-none pop"
       >
         {/* Barra superior com botões de Ação */}
         <div className="absolute top-3 inset-x-3 z-30 flex items-center justify-between pointer-events-none">
@@ -181,7 +181,7 @@ export default function PromoVideoModal({ isOpen, onClose }: PromoVideoModalProp
 
           {/* Overlay quando finalizado */}
           {isEnded && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-forest-deep/85 p-6 text-center text-paper backdrop-blur-sm animate-in fade-in duration-300">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-forest-deep/90 p-6 text-center text-paper backdrop-blur-sm pop">
               <span className="eyebrow !text-sun tracking-widest">Flora MOC</span>
               <h3 className="font-serif text-2xl font-bold leading-snug">Explore e descubra o verde da nossa cidade</h3>
               <p className="text-xs text-paper/80 max-w-[260px]">
