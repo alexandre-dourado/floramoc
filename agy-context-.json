@@ -56,9 +56,9 @@
       "summary": "Mixagem e sincronização da trilha de locução oficial (C:\\Users\\55389\\Desktop\\flora.mp3) com os vídeos promocionais em 1080x1920, gerando as cópias narradas oficiais promo/output/flora-moc-lancamento-narrado.mp4 e FloraMOC-Promo-Animacao-narrado.mp4 (áudio estéreo AAC 192k @ 44.1kHz sincronizado perfeitamente aos 26s de vídeo)."
     },
     {
-      "date": "2026-11-17",
+      "date": "2026-11-18",
       "author": "AGY CLI",
-      "summary": "Concatenação das duas partes do vídeo promocional (flora1 + flora2) em vídeo unificado narrado de 20s (720x1280); conversão de alta eficiência para WebM otimizado (VP9 + Opus) e fallback MP4 (H.264 + AAC com faststart) e poster WebP em public/assets/video/; criação do componente PromoVideoModal com diálogo acessível, autoplay mudo inicial com botão para ativar som, fechamento com botão 'X' e tecla Escape, barra de progresso e CTA final para explorar o mapa; integração na página inicial (HomePage) com botão discreto na barra de filtros para reabrir o vídeo a qualquer momento."
+      "summary": "Deploy em produção na Vercel (https://floramoc-pi.vercel.app): commit e push para origin/main com o vídeo unificado (flora1 + flora2 em WebM/MP4), PromoVideoModal na HomePage, e atualização do Service Worker (sw.js) para floramoc-v1.4 contornando range requests de vídeo."
     }
   ]
 }
