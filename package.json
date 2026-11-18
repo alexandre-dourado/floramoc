@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc -b",
-    "test": "vitest run"
+    "test": "vitest run",
+    "promo:preview": "vite --open promo/index.html",
+    "promo:render": "python promo/scripts/render_video2.py"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",

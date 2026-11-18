@@ -11,3 +11,4 @@ tsconfig.tsbuildinfo
 *.tar.gz
 *.zip
 .env*
+/FloraMOC-Promo-Animacao*.mp4

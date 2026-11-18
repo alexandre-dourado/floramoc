@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Search, X } from 'lucide-react'
+import { Film, Plus, Search, X } from 'lucide-react'
 import InstallBanner from '../components/layout/InstallBanner'
+import PromoVideoModal from '../components/promo/PromoVideoModal'
 import PlantsMap from '../components/map/PlantsMap'
 import PlantList from '../components/plants/PlantList'
 import PlantDetail from '../components/plants/PlantDetail'
@@ -46,6 +47,7 @@ function Filters({ q, setQ, cat, setCat }: FiltersProps) {
 }
 
 export default function HomePage() {
+  const [showPromo, setShowPromo] = useState(true)
   const [bounds, setBounds] = useState<Bounds | null>(null)
   const [q, setQ] = useState('')
   const dq = useDebounced(q)
@@ -75,6 +77,7 @@ export default function HomePage() {
   return (
     <div className="relative flex h-[calc(100dvh-3.5rem)] flex-col">
       <InstallBanner />
+      <PromoVideoModal isOpen={showPromo} onClose={() => setShowPromo(false)} />
       <div className="relative flex min-h-0 flex-1 flex-col lg:flex-row">
         <div className="atlas-map relative min-h-0 flex-1">
           <PlantsMap plants={plants} selectedId={selectedId} onSelect={onSelect} onBounds={setBounds} />
@@ -83,6 +86,15 @@ export default function HomePage() {
             <div className="mt-2 hidden items-center gap-2 lg:flex">
               <CountBadge loading={loading} count={plants.length} className="shadow-md" />
               {plants.length >= PUBLIC_LIMIT && <span className="glass rounded-full px-3 py-1 text-xs text-muted">Limite de 1.000 atingido; aproxime o mapa</span>}
+              <button
+                type="button"
+                onClick={() => setShowPromo(true)}
+                title="Assistir apresentação do Flora MOC"
+                className="glass inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-forest shadow-sm hover:bg-forest hover:text-paper transition-all"
+              >
+                <Film aria-hidden className="h-3.5 w-3.5 text-sun" />
+                <span>Vídeo</span>
+              </button>
             </div>
           </div>
         </div>

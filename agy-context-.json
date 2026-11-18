@@ -44,6 +44,21 @@
       "date": "2026-11-17",
       "author": "AGY CLI",
       "summary": "Transformação completa em Progressive Web App (PWA): Web App Manifest standalone, ícones adaptativos e maskable (192px/512px), Service Worker com cache-first para estáticos e fallback offline, e barra interativa de instalação na Home (InstallBanner) com 1-click install no Android/Chromium e guia passo a passo no iOS Safari."
+    },
+    {
+      "date": "2026-11-17",
+      "author": "AGY CLI",
+      "summary": "Implementação do sistema completo de vídeo promocional: 1) Botão de exportação MP4 integrado ao FloraMOC-Promo-Animacao.html com gravação via MediaRecorder e renderização do arquivo FloraMOC-Promo-Animacao.mp4 (1080x1920, H.264, 30fps); 2) Execução integral da Missão 03 com a suíte oficial na pasta promo/ (index.html, styles, motion, timeline, scripts de renderização headless via Playwright+FFmpeg, roteiro de locução e geração dos vídeos flora-moc-lancamento-1080x1920.mp4 e flora-moc-lancamento-silent.mp4)."
+    },
+    {
+      "date": "2026-11-17",
+      "author": "AGY CLI",
+      "summary": "Mixagem e sincronização da trilha de locução oficial (C:\\Users\\55389\\Desktop\\flora.mp3) com os vídeos promocionais em 1080x1920, gerando as cópias narradas oficiais promo/output/flora-moc-lancamento-narrado.mp4 e FloraMOC-Promo-Animacao-narrado.mp4 (áudio estéreo AAC 192k @ 44.1kHz sincronizado perfeitamente aos 26s de vídeo)."
+    },
+    {
+      "date": "2026-11-17",
+      "author": "AGY CLI",
+      "summary": "Concatenação das duas partes do vídeo promocional (flora1 + flora2) em vídeo unificado narrado de 20s (720x1280); conversão de alta eficiência para WebM otimizado (VP9 + Opus) e fallback MP4 (H.264 + AAC com faststart) e poster WebP em public/assets/video/; criação do componente PromoVideoModal com diálogo acessível, autoplay mudo inicial com botão para ativar som, fechamento com botão 'X' e tecla Escape, barra de progresso e CTA final para explorar o mapa; integração na página inicial (HomePage) com botão discreto na barra de filtros para reabrir o vídeo a qualquer momento."
     }
   ]
 }
