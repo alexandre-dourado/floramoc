@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, LocateFixed, Send, Trash2 } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Camera, FolderOpen, LocateFixed, Send, Trash2 } from 'lucide-react'
 import LocationPicker, { type Point } from '../components/map/LocationPicker'
 import { CategoryIcon, PlantPhoto } from '../components/plants/bits'
+import PlantComboBox from '../components/plants/PlantComboBox'
 import { useAuth } from '../features/auth/AuthContext'
 import { CATEGORIES, IDENT_LEVELS, OCCURRENCE_TYPES, PRECISIONS, QUANTITIES, type Category, type IdentificationLevel, type LocationPrecision, type OccurrenceType, type QuantityEstimate } from '../lib/constants'
 import { ACCEPTED_PHOTO_TYPES, reprocessPhoto, validatePhoto } from '../lib/image'
@@ -156,8 +157,27 @@ export default function ContributePage() {
               <label className="flex min-h-11 items-center gap-2 font-semibold"><input type="checkbox" className="h-5 w-5 accent-forest" checked={form.unknown} onChange={(e) => set('unknown', e.target.checked)} />Não sei identificar</label>
               {!form.unknown && (
                 <>
-                  <div><label className="label" htmlFor="cn">Nome popular *</label><input id="cn" className="field font-serif !text-xl font-semibold" maxLength={100} value={form.common_name} onChange={(e) => set('common_name', e.target.value)} /></div>
-                  <div><label className="label" htmlFor="sn">Nome científico (opcional)</label><input id="sn" className="field font-serif !text-xl italic" maxLength={150} value={form.scientific_name} onChange={(e) => set('scientific_name', e.target.value)} /></div>
+                  <PlantComboBox
+                    id="cn"
+                    label="Nome popular *"
+                    value={form.common_name}
+                    maxLength={100}
+                    placeholder="Ex.: Mangueira, Ipê-amarelo…"
+                    onChange={(common, sci, cat) => {
+                      set('common_name', common)
+                      if (sci !== undefined) set('scientific_name', sci)
+                      if (cat !== undefined) set('category', cat)
+                    }}
+                  />
+                  <PlantComboBox
+                    id="sn"
+                    label="Nome científico (opcional)"
+                    value={form.scientific_name}
+                    maxLength={150}
+                    italic
+                    placeholder="Ex.: Mangifera indica…"
+                    onChange={(val) => set('scientific_name', val)}
+                  />
                   <div><label className="label" htmlFor="il">Grau de identificação</label>
                     <select id="il" className="field" value={form.identification_level} onChange={(e) => set('identification_level', e.target.value as IdentificationLevel)}>
                       {IDENT_LEVELS.filter((l) => l.value !== 'unknown').map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
@@ -187,11 +207,41 @@ export default function ContributePage() {
           {step === 2 && (
             <section className="pop space-y-4" aria-label="Foto e envio">
               <div>
-                <label className="label" htmlFor="ph">Foto (opcional, JPEG/PNG/WebP até 5 MB)</label>
-                <input id="ph" type="file" accept={ACCEPTED_PHOTO_TYPES.join(',')} className="field file:mr-3 file:rounded-lg file:border-0 file:bg-sage file:px-3 file:py-1.5 file:font-semibold file:text-forest" onChange={(e) => pickPhoto(e.target.files?.[0])} />
+                <p className="label">Foto (opcional, JPEG/PNG/WebP até 5 MB)</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {/* Câmera — abre câmera traseira no mobile */}
+                  <label htmlFor="ph-cam" className="btn btn-primary cursor-pointer justify-center">
+                    <Camera aria-hidden className="h-4 w-4" />
+                    Tirar foto
+                    <input
+                      id="ph-cam"
+                      type="file"
+                      accept={ACCEPTED_PHOTO_TYPES.join(',')}
+                      {...({ capture: 'environment' } as React.InputHTMLAttributes<HTMLInputElement>)}
+                      className="sr-only"
+                      onChange={(e) => pickPhoto(e.target.files?.[0])}
+                    />
+                  </label>
+                  {/* Galeria / arquivo */}
+                  <label htmlFor="ph-file" className="btn btn-ghost cursor-pointer justify-center">
+                    <FolderOpen aria-hidden className="h-4 w-4" />
+                    Galeria / Arquivo
+                    <input
+                      id="ph-file"
+                      type="file"
+                      accept={ACCEPTED_PHOTO_TYPES.join(',')}
+                      className="sr-only"
+                      onChange={(e) => pickPhoto(e.target.files?.[0])}
+                    />
+                  </label>
+                </div>
                 {preview ? <img src={preview} alt="Pré-visualização da foto escolhida" className="mt-2 aspect-[4/3] w-full rounded-2xl object-cover ring-1 ring-line" />
                   : oldPhoto && !removeOld ? <PlantPhoto path={oldPhoto} alt="Foto atual" className="mt-2 aspect-[4/3] w-full rounded-2xl ring-1 ring-line" /> : null}
-                {(photo || (oldPhoto && !removeOld)) && <button type="button" className="btn btn-ghost mt-2" onClick={() => { setPhoto(null); setPreview(null); setRemoveOld(true) }}><Trash2 aria-hidden className="h-4 w-4" />Remover foto</button>}
+                {(photo || (oldPhoto && !removeOld)) && (
+                  <button type="button" className="btn btn-ghost mt-2" onClick={() => { setPhoto(null); setPreview(null); setRemoveOld(true) }}>
+                    <Trash2 aria-hidden className="h-4 w-4" />Remover foto
+                  </button>
+                )}
                 <p className="mt-1 text-xs text-muted">A foto é reprocessada no seu navegador para remover metadados (como GPS).</p>
               </div>
               <div className="rounded-xl border border-line bg-white/70 p-3">
