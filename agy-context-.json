@@ -59,6 +59,11 @@
       "date": "2026-11-18",
       "author": "AGY CLI",
       "summary": "Deploy em produção na Vercel (https://floramoc-pi.vercel.app): commit e push para origin/main com o vídeo unificado (flora1 + flora2 em WebM/MP4), PromoVideoModal na HomePage, e atualização do Service Worker (sw.js) para floramoc-v1.4 contornando range requests de vídeo."
+    },
+    {
+      "date": "2026-11-18",
+      "author": "AGY CLI",
+      "summary": "UX do formulário de contribuição: (1) Botão 'Tirar foto' (capture=environment) + 'Galeria / Arquivo' substituindo o input simples de foto; (2) PlantComboBox com 153 espécies do Norte de Minas (flora-norte-de-minas.json → plant-suggestions.ts) com autocomplete por nome popular/científico e preenchimento automático de nome científico e categoria. TS 0 erros, 24/24 testes. Commit 3abc074."
     }
   ]
 }
